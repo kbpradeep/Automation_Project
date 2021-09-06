@@ -1,3 +1,4 @@
+#!/bin/bash
 s3_bucket="upgrad-pradeep"
 name="Pradeep"
 timestamp=$(date '+%d%m%Y-%H%M%S')
