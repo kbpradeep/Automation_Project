@@ -36,4 +36,42 @@ mv $filename /tmp/$filename
 #copy the logs to s3-bucket
 aws s3 cp /tmp/${name}-httpd-logs-${timestamp}.tar s3://${s3_bucket}/${name}-httpd-logs-${timestamp}.tar
 
+#check and update the inventory file with the metadat of archived logs
+FILE=/var/www/html/inventory.html
+if test -f "$FILE"; then
+    echo "$FILE exists."
+    
+    {
+    echo "<table>"
+    echo "<tr>"	    
+    echo "<td style="padding:20px">httpd-logs</th>"
+    echo "<td style="padding:20px">$timestamp</th>"
+    echo "<td style="padding:20px">tar</th>"
+    echo "<td style="padding:20px">$(du -sh /tmp/Pradeep-httpd-logs-06092021-130134.tar | awk '{print $1}')</th>"
+    echo "</tr>"
+    echo "</table>"
+    }>>$FILE
+else
+	{
+echo "<html>"
+echo "<table>"
+echo "<tr>"
+echo "<th style="padding:20px">Log Type</th>"
+echo "<th style="padding:20px">Date Created</th>"
+echo "<th style="padding:20px">Type</th>"
+echo "<th style="padding:20px">Size</th>"
+echo "</tr>"
+echo "<tr>"
+echo "<td style="padding:20px">httpd-logs</th>"
+echo "<td style="padding:20px">$timestamp</th>"
+echo "<td style="padding:20px">tar</th>"
+echo "<td style="padding:20px">$(du -sh /tmp/Pradeep-httpd-logs-06092021-130134.tar | awk '{print $1}')</th>"
+echo "</tr>"
+
+echo "</table>"
+echo "</html>"
+
+}>> $FILE
+fi
+
 
