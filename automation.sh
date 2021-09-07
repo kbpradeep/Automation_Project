@@ -36,4 +36,48 @@ mv $filename /tmp/$filename
 #copy the logs to s3-bucket
 aws s3 cp /tmp/${name}-httpd-logs-${timestamp}.tar s3://${s3_bucket}/${name}-httpd-logs-${timestamp}.tar
 
+#check and update the inventory file with the metadat of archived logs
+FILE=/var/www/html/inventory.html
+if test -f "$FILE"; then
+    echo "$FILE exists."
+    
+    {
+    echo "<table>"
+    echo "<tr>"	    
+    echo "<td style="padding:20px">httpd-logs</th>"
+    echo "<td style="padding:20px">$timestamp</th>"
+    echo "<td style="padding:20px">tar</th>"
+    echo "<td style="padding:20px">$(du -sh /tmp/${name}-httpd-logs-${timestamp}.tar | awk '{print $1}')</th>"
+    echo "</tr>"
+    echo "</table>"
+    }>>$FILE
+else
+	{
+echo "<html>"
+echo "<table>"
+echo "<tr>"
+echo "<th style="padding:20px">Log Type</th>"
+echo "<th style="padding:20px">Date Created</th>"
+echo "<th style="padding:20px">Type</th>"
+echo "<th style="padding:20px">Size</th>"
+echo "</tr>"
+echo "<tr>"
+echo "<td style="padding:20px">httpd-logs</th>"
+echo "<td style="padding:20px">$timestamp</th>"
+echo "<td style="padding:20px">tar</th>"
+echo "<td style="padding:20px">$(du -sh /tmp/${name}-httpd-logs-${timestamp}.tar | awk '{print $1}')</th>"
+echo "</tr>"
+
+echo "</table>"
+echo "</html>"
+
+}>> $FILE
+fi
+#setup a cron job to run /root/Automation_Project/automation.sh every day at 00:00
+CRON_AUTOMATION_JOB=/etc/cron.d/automation
+if test -f "$CRON_AUTOMATION_JOB"; then
+    echo "Job $CRON_AUTOMATION_JOB exists."
+else
+    echo "0 0 * * * root /root/Automation_Project/automation.sh" > $CRON_AUTOMATION_JOB
+fi
 
