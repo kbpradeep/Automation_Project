@@ -47,7 +47,7 @@ if test -f "$FILE"; then
     echo "<td style="padding:20px">httpd-logs</th>"
     echo "<td style="padding:20px">$timestamp</th>"
     echo "<td style="padding:20px">tar</th>"
-    echo "<td style="padding:20px">$(du -sh /tmp/Pradeep-httpd-logs-06092021-130134.tar | awk '{print $1}')</th>"
+    echo "<td style="padding:20px">$(du -sh /tmp/${name}-httpd-logs-${timestamp}.tar | awk '{print $1}')</th>"
     echo "</tr>"
     echo "</table>"
     }>>$FILE
@@ -65,7 +65,7 @@ echo "<tr>"
 echo "<td style="padding:20px">httpd-logs</th>"
 echo "<td style="padding:20px">$timestamp</th>"
 echo "<td style="padding:20px">tar</th>"
-echo "<td style="padding:20px">$(du -sh /tmp/Pradeep-httpd-logs-06092021-130134.tar | awk '{print $1}')</th>"
+echo "<td style="padding:20px">$(du -sh /tmp/${name}-httpd-logs-${timestamp}.tar | awk '{print $1}')</th>"
 echo "</tr>"
 
 echo "</table>"
@@ -73,5 +73,11 @@ echo "</html>"
 
 }>> $FILE
 fi
-
+#setup a cron job to run /root/Automation_Project/automation.sh every day at 00:00
+CRON_AUTOMATION_JOB=/etc/cron.d/automation
+if test -f "$CRON_AUTOMATION_JOB"; then
+    echo "Job $CRON_AUTOMATION_JOB exists."
+else
+    echo "0 0 * * * root /root/Automation_Project/automation.sh" > $CRON_AUTOMATION_JOB
+fi
 
